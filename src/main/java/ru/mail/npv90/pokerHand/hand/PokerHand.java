@@ -1,20 +1,23 @@
 package ru.mail.npv90.pokerHand.hand;
 
 
+import lombok.Getter;
 import ru.mail.npv90.exception.IncorrectDistribution;
 import ru.mail.npv90.exception.IncorrectPokerHand;
 import ru.mail.npv90.pokerHand.card.Card;
+import ru.mail.npv90.pokerHand.card.combination.CombinationSearcher;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class PokerHand implements Comparable {
+@Getter
+public class PokerHand implements Comparable<PokerHand> {
     public static final int cardCount = 5;
     public static final String delimiter = " ";
     private final List<Card> hand;
 
-    PokerHand(String distribution) throws IncorrectPokerHand {
+    public PokerHand(String distribution) throws IncorrectPokerHand {
         try {
             PokerHandValidator.validate(distribution);
         } catch (IncorrectDistribution e) {
@@ -30,8 +33,15 @@ public class PokerHand implements Comparable {
     }
 
     @Override
-    public int compareTo(Object o) {
+    public int compareTo(PokerHand o) {
+        int thisPower = CombinationSearcher.findCombination(hand).getPower();
+        int otherPower = CombinationSearcher.findCombination(o.hand).getPower();
 
-        return 0;
+        return otherPower - thisPower;
+    }
+
+    @Override
+    public String toString() {
+        return String.format("Hand: %s, Combination: %s\n", hand, CombinationSearcher.getCombination(this));
     }
 }

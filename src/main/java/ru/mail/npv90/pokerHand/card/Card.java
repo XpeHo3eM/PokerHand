@@ -32,8 +32,8 @@ public class Card implements Comparable {
     private final Character suit;
 
     public Card(String card) throws IncorrectCard {
-        this.value = card.charAt(0);
-        this.suit = card.charAt(1);
+        this.value = Character.toUpperCase(card.charAt(0));
+        this.suit = Character.toUpperCase(card.charAt(1));
     }
 
     @Override

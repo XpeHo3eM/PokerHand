@@ -9,8 +9,8 @@ public class CardValidator {
             throw new IncorrectCard(String.format("Некорректная карта в раздаче: %s", card));
         }
 
-        char value = card.charAt(0);
-        char suit = card.charAt(1);
+        char value = Character.toUpperCase(card.charAt(0));
+        char suit = Character.toUpperCase(card.charAt(1));
 
         if (!Card.availableValues.containsKey(value)) {
             throw new IncorrectCard(String.format("Карта содержит некорректное значение: %s", value));

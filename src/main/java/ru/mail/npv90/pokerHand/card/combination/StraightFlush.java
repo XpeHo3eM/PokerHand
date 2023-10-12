@@ -1,13 +1,16 @@
-package ru.mail.npv90.pokerHand.combination;
+package ru.mail.npv90.pokerHand.card.combination;
 
 import ru.mail.npv90.pokerHand.card.Card;
 import ru.mail.npv90.pokerHand.hand.PokerHand;
 
 import java.util.List;
 
-public class StraightFlush implements Combination {
+public class StraightFlush extends Combination {
+    public StraightFlush(int power) {
+        setPower(power);
+    }
     @Override
-    public boolean isCombination(List<Card> hand) {
+    public boolean isExists(List<Card> hand) {
         char suit = hand.get(0).getSuit();
 
         if (!hand.stream().allMatch(card -> card.getSuit() == suit)) {
@@ -21,6 +24,11 @@ public class StraightFlush implements Combination {
                 .sum();
         totalPower -= lowCardPower * PokerHand.cardCount;
 
-        return totalPower == 10;
+        long uniquePowers = hand.stream()
+                .mapToInt(card -> Card.availableValues.get(card.getValue()))
+                .distinct()
+                .count();
+
+        return totalPower == 10 && uniquePowers == PokerHand.cardCount;
     }
 }
