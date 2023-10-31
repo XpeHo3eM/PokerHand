@@ -1,15 +1,16 @@
 package ru.mail.npv90.pokerHand.card;
 
 import lombok.Getter;
-import ru.mail.npv90.exception.IncorrectCard;
+import ru.mail.npv90.exception.IncorrectCardException;
 
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+
 @Getter
-public class Card implements Comparable {
+public class Card implements Comparable<Card> {
     public static final int cardSize = 2;
     public static final Map<Character, Integer> availableValues = Stream.of(new Object[][]{
             {'2', 0},
@@ -29,10 +30,14 @@ public class Card implements Comparable {
     public static final Set<Character> availableSuits = Set.of('S', 'H', 'D', 'C');
 
     private final Character value;
+    private final int valuePower;
     private final Character suit;
 
-    public Card(String card) throws IncorrectCard {
+    public Card(String card) throws IncorrectCardException {
+        CardValidator.validate(card);
+
         this.value = Character.toUpperCase(card.charAt(0));
+        this.valuePower = availableValues.get(value);
         this.suit = Character.toUpperCase(card.charAt(1));
     }
 
@@ -58,12 +63,7 @@ public class Card implements Comparable {
     }
 
     @Override
-    public int compareTo(Object o) {
-        Card other = (Card) o;
-
-        int valueThis = availableValues.get(value);
-        int valueOther = availableValues.get(other.getValue());
-
-        return valueThis - valueOther;
+    public int compareTo(Card other) {
+        return valuePower - other.valuePower;
     }
 }

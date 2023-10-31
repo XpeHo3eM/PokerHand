@@ -1,9 +1,11 @@
 package ru.mail.npv90;
 
 import org.junit.jupiter.api.Test;
-import ru.mail.npv90.exception.IncorrectPokerHand;
+import ru.mail.npv90.exception.DuplicateCardException;
+import ru.mail.npv90.exception.IncorrectPokerHandException;
 import ru.mail.npv90.pokerHand.card.combination.CombinationSearcher;
 import ru.mail.npv90.pokerHand.hand.PokerHand;
+import ru.mail.npv90.pokerHand.ranking.RankingHands;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -14,20 +16,29 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class PokerHandTest {
     @Test
+    public void shouldThrowExceptionDuplicateCardOnHands() {
+        assertThrows(DuplicateCardException.class, () -> new RankingHands(List.of(
+                        new PokerHand("KS 2H 5C JD TC"),
+                        new PokerHand("AD QD KD JD TD"))),
+                "Создалась раздача с повторяющимися картами");
+
+    }
+
+    @Test
     public void shouldGetExceptionIncorrectCardValue() {
-        assertThrows(IncorrectPokerHand.class, () -> new PokerHand(""),
+        assertThrows(IncorrectPokerHandException.class, () -> new PokerHand(""),
                 "Создалась рука с пустыми картами");
-        assertThrows(IncorrectPokerHand.class, () -> new PokerHand("2C 3C 4C 5C 6С 7С"),
+        assertThrows(IncorrectPokerHandException.class, () -> new PokerHand("2C 3C 4C 5C 6С 7С"),
                 "Создалась рука с большим количеством карт");
-        assertThrows(IncorrectPokerHand.class, () -> new PokerHand("2C 3C 4C 5C"),
+        assertThrows(IncorrectPokerHandException.class, () -> new PokerHand("2C 3C 4C 5C"),
                 "Создалась рука с 4 картами");
-        assertThrows(IncorrectPokerHand.class, () -> new PokerHand("2C 3C 4C 5C 6Q"),
+        assertThrows(IncorrectPokerHandException.class, () -> new PokerHand("2C 3C 4C 5C 6Q"),
                 "Создалась рука с некорректной мастью");
-        assertThrows(IncorrectPokerHand.class, () -> new PokerHand("1C 3C 4C 5C 6С"),
+        assertThrows(IncorrectPokerHandException.class, () -> new PokerHand("1C 3C 4C 5C 6С"),
                 "Создалась рука с некорректным значением");
-        assertThrows(IncorrectPokerHand.class, () -> new PokerHand("2C 3C 4C 5 C"),
+        assertThrows(IncorrectPokerHandException.class, () -> new PokerHand("2C 3C 4C 5 C"),
                 "Создалась рука с некорректной картой");
-        assertThrows(IncorrectPokerHand.class, () -> new PokerHand("2C 2C 4C 5С 6C"),
+        assertThrows(IncorrectPokerHandException.class, () -> new PokerHand("2C 2C 4C 5С 6C"),
                 "Создалась рука с повторяющейся картой");
     }
 
@@ -39,16 +50,16 @@ public class PokerHandTest {
 
     @Test
     public void shouldSortHands() {
-        PokerHand hand1 = new PokerHand("KS 2H 5C JD TD");
+        PokerHand hand1 = new PokerHand("KS 2H 5C JC TC");
         PokerHand hand2 = new PokerHand("AD QD KD JD TD");
         PokerHand hand3 = new PokerHand("3S 3C 3D 3H AH");
 
-        List<PokerHand> hands = Arrays.asList(hand1, hand2, hand3);
-        Collections.sort(hands);
+        RankingHands hands = new RankingHands(Arrays.asList(hand1, hand2, hand3));
+        Collections.sort(hands.getHands());
 
         List<PokerHand> correctSortedHands = List.of(hand2, hand3, hand1);
 
-        assertEquals(correctSortedHands, hands, "Некорректная сортировка");
+        assertEquals(correctSortedHands, hands.getHands(), "Некорректная сортировка");
     }
 
     @Test
